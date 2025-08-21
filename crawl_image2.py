@@ -78,8 +78,11 @@ def run(name_list, output_directory, DUO_CHECK):
                 print(f"File {image_name} exists")
                 continue
             print(f"Searching for {name} in the directory...")
-            first_name = name.split(" ")[0]
-            last_name = name.split(" ")[1]
+            name_array = name.split(" ")
+            first_name = ""
+            if len(name_array) == 2: 
+                first_name = name_array[0] 
+            last_name = name_array[-1]
             wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
             firstName_field = driver.find_element(By.ID, "firstName")
             lastName_field = driver.find_element(By.ID, "lastName")
