@@ -60,4 +60,4 @@ of html elements, or decide to rework how pages are linked.
 
 It's also very possible that DUO might no longer be a thing. So feel free to 
 use the script as long as it works. If it breaks, then, well, you should build 
-the next one. It's fun.
+the next one. It's fun. Or vibe code it. Whatever works for you.
