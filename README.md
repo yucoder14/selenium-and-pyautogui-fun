@@ -60,6 +60,7 @@ Usage
 
 ```
 python3 crawl_images2.py -i student_names.txt -o output_directory
+python3 crawl_images2.py -e -i student_emails.txt -o output_directory
 ```
 
 When the script prompts you for username and password, enter your Carleton

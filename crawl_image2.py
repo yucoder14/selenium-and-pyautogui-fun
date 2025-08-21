@@ -15,7 +15,7 @@ import argparse
 import re
 
 # get carleton credential 
-def run(name_list, output_directory, DUO_CHECK):  
+def run(name_list, output_directory, DUO_CHECK, USE_EMAIL):  
     username = input("Enter username: ") 
     password = getpass.getpass("Enter your password: ")
 
@@ -63,8 +63,6 @@ def run(name_list, output_directory, DUO_CHECK):
     # wait until verified
     wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
     cookies = driver.get_cookies();
-    for cookie in cookies:
-        print(cookie)
 
     s = requests.Session() 
     for cookie in cookies:
@@ -72,36 +70,53 @@ def run(name_list, output_directory, DUO_CHECK):
 
     with open(name_list, "r") as file: 
         for line in file:
-            name = line.strip()
+            if (USE_EMAIL):
+                # search by email
+                email = line.strip()
+                wait.until(EC.visibility_of_element_located((By.ID, "email")))
+                email_field = driver.find_element(By.ID, "email")
+                email_field.clear()
+                email_field.send_keys(email)
+            else:
+                # search by name
+                name = line.strip()
+                first_name = ""
+                name_array = name.split(" ")
+                if len(name_array) == 2: 
+                    first_name = name_array[0] 
+                last_name = name_array[-1]
+
+                wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
+                firstName_field = driver.find_element(By.ID, "firstName")
+                lastName_field = driver.find_element(By.ID, "lastName")
+
+                firstName_field.clear()
+                lastName_field.clear()
+
+                firstName_field.send_keys(first_name)
+                lastName_field.send_keys(last_name) 
+
+            # submit query
+            campus_directory_submit = driver.find_element(By.ID, "campus-directory__submit")
+            campus_directory_submit.click();
+            
+            # grab person's name
+            wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-name")))
+            name = driver.find_element(By.CLASS_NAME, "campus-directory__person-name").text
             image_name = f"{output_directory}/{name.replace(' ', '_')}.jpg"
             if os.path.exists(image_name): 
                 print(f"File {image_name} exists")
                 continue
-            print(f"Searching for {name} in the directory...")
-            name_array = name.split(" ")
-            first_name = ""
-            if len(name_array) == 2: 
-                first_name = name_array[0] 
-            last_name = name_array[-1]
-            wait.until(EC.visibility_of_element_located((By.ID, "firstName")))
-            firstName_field = driver.find_element(By.ID, "firstName")
-            lastName_field = driver.find_element(By.ID, "lastName")
-            campus_directory_submit = driver\
-                    .find_element(By.ID, "campus-directory__submit")
-            firstName_field.clear()
-            lastName_field.clear()
-            firstName_field.send_keys(first_name)
-            lastName_field.send_keys(last_name) 
-            campus_directory_submit.click();
 
+            # download headshot
             wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-image")))
-            image_div = driver\
-                    .find_element(By.CLASS_NAME, "campus-directory__person-image")
+            image_div = driver.find_element(By.CLASS_NAME, "campus-directory__person-image")
             image = image_div.find_element(By.TAG_NAME, "img")
             image_src = image.get_attribute("src").replace("/?gql=refresh", ".png")
 
             response = s.get(image_src)
 
+            print(f"Grabbing headshot of {name}...")
             if response.status_code == 200: 
                 with open(image_name, 'wb') as f:
                     f.write(response.content)
@@ -118,13 +133,15 @@ def main():
     parser = argparse.ArgumentParser() 
     parser.add_argument("-i", "--input_file", required=True, type=str)
     parser.add_argument("-o", "--output_dir", required=True, type=str)
+    parser.add_argument("-e", "--email", action='store_true') 
     args = parser.parse_args()
 
-    name_list = args.input_file
+    input_list = args.input_file
     output_directory = args.output_dir
+    USE_EMAIL = args.email
 
-    if not os.path.exists(name_list): 
-        print(f"Error: {name_list} is not a valid path")
+    if not os.path.exists(input_list): 
+        print(f"Error: {input_list} is not a valid path")
         exit(2)
 
     try:
@@ -135,6 +152,7 @@ def main():
         print(f"Error creating directory: {e}")
         exit(3)
 
+    # check if duo will ask user to trust device
     DUO_CHECK = True
     try:  
         result = subprocess.run(
@@ -151,7 +169,7 @@ def main():
         print(f"Command failed with exit code {e.returncode}")
         print(f"Error Output: {e.stderr}")
 
-    run(name_list, output_directory, DUO_CHECK)
+    run(input_list, output_directory, DUO_CHECK, USE_EMAIL)
 
 if __name__ == "__main__": 
     main()
