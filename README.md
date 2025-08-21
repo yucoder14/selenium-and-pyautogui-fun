@@ -12,7 +12,7 @@ it's more fun that way.~
 The reason why I was not getting the correct images was because when I was using
 requests, it wasn't using my session cookies. It appears that Carleton does not 
 allow strangers to download photos of students. Now, there's no need to be 
-paranoid about messing with the computer. 
+paranoid about messing with the computer when the script is running.
 
 I'm keeping the old script as a comparison. It will work, albeit its fragile-ness.
 
