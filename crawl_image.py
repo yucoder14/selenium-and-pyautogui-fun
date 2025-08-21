@@ -64,6 +64,10 @@ def run(name_list, output_directory, DUO_CHECK):
     with open(name_list, "r") as file: 
         for line in file:
             name = line.strip()
+            image_name = f"{output_directory}/{name.replace(' ', '_')}.jpg"
+            if os.path.exists(image_name): 
+                print(f"File {image_name} exists")
+                continue
             print(f"Searching for {name} in the directory...")
             first_name = name.split(" ")[0]
             last_name = name.split(" ")[1]
@@ -101,7 +105,7 @@ def run(name_list, output_directory, DUO_CHECK):
             time.sleep(1)
             pyautogui.write("/")
             time.sleep(1)
-            pyautogui.write(f"{output_directory[1:]}/{name.replace(' ', '_')}.jpg")
+            pyautogui.write(image_name[1:])
             time.sleep(1)
             pyautogui.press('enter')
             time.sleep(1)

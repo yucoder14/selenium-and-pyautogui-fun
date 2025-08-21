@@ -56,7 +56,9 @@ Caveats
 
 When the script is running, you CANNOT touch the machine where the script is 
 running. Otherwise, everything will break. GUI scripting is very fragile, so
-please tend it with extra care.
+please tend it with extra care. If you get unlucky and a pop-up pops up, 
+try to recover as fast as you can. If not, the script will continue where you
+previously failed.
 
 This script is bound to fail sometime in the future if the College decides 
 to revamp the student directory, modify any of the id's of html elements, 
