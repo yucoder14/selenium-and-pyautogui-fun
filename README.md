@@ -54,9 +54,13 @@ username and password.
 Caveats
 =======
 
-As any GUI scripts, this script is bound to fail sometime in the future if the
-College decides to revamp the student directory, modify any of the id's 
-of html elements, or decide to rework how pages are linked. 
+When the script is running, you CANNOT touch the machine where the script is 
+running. Otherwise, everything will break. GUI scripting is very fragile, so
+please tend it with extra care.
+
+This script is bound to fail sometime in the future if the College decides 
+to revamp the student directory, modify any of the id's of html elements, 
+or decide to rework how pages are linked. 
 
 It's also very possible that DUO might no longer be a thing. So feel free to 
 use the script as long as it works. If it breaks, then, well, you should build 

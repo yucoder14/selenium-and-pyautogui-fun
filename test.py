@@ -3,6 +3,7 @@ from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 import getpass
 import time
@@ -40,6 +41,16 @@ ActionChains(driver)\
         .key_down(Keys.ENTER)\
         .key_up(Keys.ENTER)\
         .perform()
+
+time.sleep(1)
+
+try: 
+    error_p = driver.find_element(By.CLASS_NAME, "form-element")
+    print("Wrong Credentials!")
+    driver.quit()
+    exit(1)
+except NoSuchElementException:
+    pass
 
 print("Waiting for DUO Authentication...")
 # stupid DUO; this step is not required if using campus computers 
