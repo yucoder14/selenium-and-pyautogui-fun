@@ -14,6 +14,8 @@ requests, it wasn't using my session cookies. It appears that Carleton does not
 allow strangers to download photos of students. Now, there's no need to be 
 flimsy about messing with the computer. 
 
+I'm keeping the old script as a comparison. It will work, albeit its fragile-ness.
+
 Prerequisites
 =============
 
@@ -27,11 +29,18 @@ If not present, press the plus button and find Terminal.app.~
 
 You also need to have Chrome.
 
-The script depends on two (three?) libraries: 
+The old script depends on the following two libraries:
 
 ```
 selenium
 pytautogui
+```
+
+The new script depends on the following two libraries:
+
+```
+selenium
+requests
 ```
 
 I think `getpass` should be installed with base python, but, if not, you need
@@ -50,7 +59,7 @@ Usage
 =====
 
 ```
-python3 crawl_images.py -i student_names.txt -o output_directory
+python3 crawl_images.py2 -i student_names.txt -o output_directory
 ```
 
 When the script prompts you for username and password, enter your Carleton
