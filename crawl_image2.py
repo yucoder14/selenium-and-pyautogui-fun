@@ -22,8 +22,6 @@ def run(name_list, output_directory, DUO_CHECK, USE_EMAIL):
     print("Setting up Chrome driver...")
     driver = webdriver.Chrome()
     driver.get("https://www.carleton.edu/directory")
-    driver.set_window_position(0, 0)
-    driver.set_window_size(1024,1024)
 
     sign_in_button = driver\
             .find_element(By.CLASS_NAME, "campus-directory__login-link")
