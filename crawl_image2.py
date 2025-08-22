@@ -3,7 +3,7 @@ from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 import requests
 
@@ -27,7 +27,7 @@ def run(name_list, output_directory, DUO_CHECK, USE_EMAIL):
             .find_element(By.CLASS_NAME, "campus-directory__login-link")
     sign_in_button.click();
 
-    wait = WebDriverWait(driver, 1000)
+    wait = WebDriverWait(driver, 10)
     wait.until(EC.visibility_of_element_located((By.ID, "idp_55012701_button")))
     login_link = driver.find_element(By.ID, "idp_55012701_button")
     login_link.click()
@@ -99,28 +99,32 @@ def run(name_list, output_directory, DUO_CHECK, USE_EMAIL):
             campus_directory_submit.click();
             
             # grab person's name
-            wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-name")))
-            name = driver.find_element(By.CLASS_NAME, "campus-directory__person-name").text
-            image_name = f"{output_directory}/{name.replace(' ', '_')}.jpg"
-            if os.path.exists(image_name): 
-                print(f"File {image_name} exists")
-                continue
+            try: 
+                wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-name")))
+                name = driver.find_element(By.CLASS_NAME, "campus-directory__person-name").text
+                image_name = f"{output_directory}/{name.replace(' ', '_')}.jpg"
+                if os.path.exists(image_name): 
+                    print(f"File {image_name} exists")
+                    continue
 
-            # download headshot
-            wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-image")))
-            image_div = driver.find_element(By.CLASS_NAME, "campus-directory__person-image")
-            image = image_div.find_element(By.TAG_NAME, "img")
-            image_src = image.get_attribute("src").replace("/?gql=refresh", ".png")
+                # download headshot
+                wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "campus-directory__person-image")))
+                image_div = driver.find_element(By.CLASS_NAME, "campus-directory__person-image")
+                image = image_div.find_element(By.TAG_NAME, "img")
+                image_src = image.get_attribute("src").replace("/?gql=refresh", ".png")
 
-            response = s.get(image_src)
+                response = s.get(image_src)
 
-            print(f"Grabbing headshot of {name}...")
-            if response.status_code == 200: 
-                with open(image_name, 'wb') as f:
-                    f.write(response.content)
-                print(f"File downloaded successfully to {image_name}")
-            else:
-                print(f"Failed to download file. Status code: {response.status_code}")
+                print(f"Grabbing headshot of {name}...")
+                if response.status_code == 200: 
+                    with open(image_name, 'wb') as f:
+                        f.write(response.content)
+                    print(f"File downloaded successfully to {image_name}")
+                else:
+                    print(f"Failed to download file. Status code: {response.status_code}")
+            except TimeoutException: 
+                print(f"{line.strip()} does not exist on directory, skipping...")
+                pass
 
             driver.back()
 
