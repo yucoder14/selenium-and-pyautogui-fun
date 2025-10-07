@@ -66,6 +66,9 @@ python3 crawl_images2.py -e -i student_emails.txt -o output_directory
 When the script prompts you for username and password, enter your Carleton
 username and password.
 
+If the student does not exists on the directory, give it 10 seconds, and 
+the script will continue down the list.
+
 Caveats
 =======
 
